@@ -6,4 +6,4 @@ app.use(cors())
 app.use(express.json())
 app.use('/' , getUsers)
 
-app.listen(8001)
+app.listen(8000)

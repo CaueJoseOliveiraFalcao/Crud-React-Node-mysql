@@ -27,7 +27,7 @@ function App() {
 
   const getUsers = async () =>{
     try{
-      const res = await axios.get('http://localhost:8001');
+      const res = await axios.get('http://localhost:8000');
       setUsers(res.data.sort((a,b) => (a.nome > b.nome ? 1 : -1)));
     }
     catch (error){
@@ -41,7 +41,7 @@ function App() {
     <div>
         <Container>
             <Form/>
-            <Grid users={users}/>
+            <Grid users={users} setUsers={setUsers} setOnEdit={setOnEdit}/>
         </Container>
         <ToastContainer autoClose={3000} position={toast.POSITION.BOTTOM_LEFT}/>
     </div>

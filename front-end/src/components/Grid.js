@@ -17,7 +17,7 @@ export const Table = styled.table`
 export const Tbody = styled.tbody``;
 export const Thead = styled.thead``;
 export const Tr = styled.tr``;
-export const Td = styled.tr`
+export const Td = styled.td`
      padding-top: 15px;
      text-align: ${(props) => (props.alignCenter ? 'center' : 'start')};
      width: ${(props) => (props.width ? props.width : 'auto')};
@@ -37,7 +37,18 @@ export const Th = styled.th`
     }
 
 `;
-export const Grid = ({ users }) =>{
+export const Grid = ({ users , setUsers , setOnEdit }) =>{
+    const handleDelete = async (id) =>{
+        await axios
+        .delete('http://localhost:8000' + id)
+        .then(({data}) => {
+            const newArray = users.filter((user) => user.id !== id)
+            setUsers(newArray)
+            toast.success(data)
+        })
+        .catch(({data}) => {toast.error(data)})
+    setOnEdit(null)
+    }
     return(
         <Table>
             <Thead>
@@ -50,15 +61,16 @@ export const Grid = ({ users }) =>{
                 </Tr>
             </Thead>
             <Tbody>
-                {users.map((item , index) => {
+            {users.map((item, index) => {
+                return (
                     <Tr key={index}>
-                        <Td width="30%" >{item.nome}</Td>
-                        <Td width="30%" >{item.email}</Td>
-                        <Td width="20%" onlyWeb>{item.fone}</Td>
-                        <Td width="20%" onlyWeb>{item.fone}</Td>
+                        <Td width="30%" alignCenter='true'>{item.nome}</Td>
+                        <Td width="30%" alignCenter='true' >{item.email}</Td>
+                        <Td width="20%" alignCenter='true' onlyWeb>{item.fone}</Td>
                         <Td alignCenter width="5%"><FaEdit/></Td>
-                        <Td alignCenter width="5%"><FaTrash/></Td>
+                        <Td alignCenter width="5%"><FaTrash onClick={() => handleDelete(item.id)}/></Td>
                     </Tr>
+                );
                 })}
             </Tbody>
         </Table>
