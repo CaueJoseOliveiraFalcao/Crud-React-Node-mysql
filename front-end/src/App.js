@@ -40,7 +40,7 @@ function App() {
   return (
     <div>
         <Container>
-            <Form users={users} setUsers={setUsers} setOnEdit={setOnEdit}/>
+            <Form getUsers={getUsers}  setUsers={setUsers} setOnEdit={setOnEdit}/>
             <Grid users={users} setUsers={setUsers} setOnEdit={setOnEdit}/>
         </Container>
         <ToastContainer autoClose={3000} position={toast.POSITION.BOTTOM_LEFT}/>
