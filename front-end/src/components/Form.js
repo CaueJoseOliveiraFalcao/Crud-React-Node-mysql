@@ -1,64 +1,64 @@
-import axios from "axios";
-import React, { useState } from "react";
+import axios, { Axios } from "axios";
+import React, { useState , useEffect, useRef } from "react";
 import styled from "styled-components";
+import { toast } from 'react-toastify'
 
 export const Form = ({ onEdit, users , setUsers , setOnEdit }) => {
+  const ref = useRef()
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
   const [data_nascimento, setDataNascimento] = useState('');
+  useEffect(() => {
+    if (onEdit){ 
+      const user = ref.current
+      user.nome.value = onEdit.nome
+      user.email.value = onEdit.email 
+      user.fone.value = onEdit.telefone
+      user.data_de_nascimento.value = onEdit.data_de_nascimento
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    if (name === "nome") {
-      setNome(value);
-    } else if (name === "email") {
-      setEmail(value);
-    } else if (name === "telefone") {
-      setTelefone(value);
-    } else if (name === "data_de_nascimento") {
-      setDataNascimento(value);
     }
-  };
+  },[onEdit])
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const user = ref.current;
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const dateString = data_nascimento
-    const dateComponents = dateString.split('-')
-    const year = dateComponents[0]
-    const mounth = dateComponents[1] - 1
-    const day = dateComponents[2]
-    const data = new Date(year,mounth,day)
-    setDataNascimento(data)
-
-    const formData = {
-      nome: nome,
-      email: email,
-      telefone: telefone,
-      data_nascimento: data_nascimento,
-    };
-    const newArray = ''
-
-     axios.post('http://localhost:8000/' , formData)
-     .then(response => {
-      console.log(response.data)
-
-      newArray = users
-      newArray.push(formData)
-    setUsers(newArray)
-    setOnEdit(null)
-     })
-     .catch(error => {
-      console.error('Ocorreu um errro' , error)
-     })
-    console.log(newArray)
-
-  };
+    if (
+      !user.nome.value ||
+      !user.email.value ||
+      !user.telefone.value ||
+      !user.data_nascimento.value 
+    ) {
+      return toast.warn("Preencha todos os campos!"); 
+    }
+    if (onEdit){
+      await axios
+      .put('https://localhost:8000/' + onEdit.id ,{
+        nome : user.nome.value,
+        email : user.email.value,
+        telefone : user.telefone.value,
+        data_nascimento :  user.data_nascimento.value
+      })
+      .then(({ data }) => toast.success(data))
+      .catch(({ data }) => toast.warn(data));
+    }
+    else { 
+      await axios
+      .post('https://localhost:8000/' , {
+        nome : user.nome.value,
+        email : user.email.value,
+        telefone : user.telefone.value,
+        data_nascimento :  user.data_nascimento.value
+      })
+      .then(({ data }) => toast.success(data))
+      .catch(({ data }) => toast.warn(data));
+    }
+  }
 
   return (
     <div>
-      <FormControler onSubmit={handleSubmit}>
+      <FormControler ref={ref} onSubmit={handleSubmit}>
         <InputArea>
           <Label>Nome</Label>
           <Input name="nome" value={nome} onChange={handleChange} />
