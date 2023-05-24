@@ -1,6 +1,90 @@
+import axios from "axios";
 import React, { useState } from "react";
 import styled from "styled-components";
 
+export const Form = ({ onEdit, users , setUsers , setOnEdit }) => {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [data_nascimento, setDataNascimento] = useState('');
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    if (name === "nome") {
+      setNome(value);
+    } else if (name === "email") {
+      setEmail(value);
+    } else if (name === "telefone") {
+      setTelefone(value);
+    } else if (name === "data_de_nascimento") {
+      setDataNascimento(value);
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const dateString = data_nascimento
+    const dateComponents = dateString.split('-')
+    const year = dateComponents[0]
+    const mounth = dateComponents[1] - 1
+    const day = dateComponents[2]
+    const data = new Date(year,mounth,day)
+    setDataNascimento(data)
+
+    const formData = {
+      nome: nome,
+      email: email,
+      telefone: telefone,
+      data_nascimento: data_nascimento,
+    };
+    const newArray = ''
+
+     axios.post('http://localhost:8000/' , formData)
+     .then(response => {
+      console.log(response.data)
+
+      newArray = users
+      newArray.push(formData)
+    setUsers(newArray)
+    setOnEdit(null)
+     })
+     .catch(error => {
+      console.error('Ocorreu um errro' , error)
+     })
+    console.log(newArray)
+
+  };
+
+  return (
+    <div>
+      <FormControler onSubmit={handleSubmit}>
+        <InputArea>
+          <Label>Nome</Label>
+          <Input name="nome" value={nome} onChange={handleChange} />
+        </InputArea>
+        <InputArea>
+          <Label>E-mail</Label>
+          <Input name="email" type="email" value={email} onChange={handleChange} />
+        </InputArea>
+        <InputArea>
+          <Label>Telefone</Label>
+          <Input name="telefone" value={telefone} onChange={handleChange} />
+        </InputArea>
+        <InputArea>
+          <Label>Data de Nascimento</Label>
+          <Input
+            name="data_de_nascimento"
+            type="date"
+            value={data_nascimento}
+            onChange={handleChange}
+          />
+        </InputArea>
+        <Button type="submit">SALVAR</Button>
+      </FormControler>
+    </div>
+  );
+};
 const FormControler = styled.form`
   display: flex;
   align-items: center;
@@ -37,74 +121,3 @@ const Button = styled.button`
   color: white;
   height: 42px;
 `;
-
-export const Form = ({ onEdit }) => {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [data_nascimento, setDataNascimento] = useState('');
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    if (name === "nome") {
-      setNome(value);
-    } else if (name === "email") {
-      setEmail(value);
-    } else if (name === "telefone") {
-      setTelefone(value);
-    } else if (name === "data_de_nascimento") {
-      setDataNascimento(value);
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const dateString = data_nascimento
-    const dateComponents = dateString.split('-')
-    const year = dateComponents[0]
-    const mounth = dateComponents[1] - 1
-    const day = dateComponents[2]
-    const data = new Date(year,mounth,day)
-    console.log(data)
-    setDataNascimento(data)
-
-    const formData = {
-      nome: nome,
-      email: email,
-      telefone: telefone,
-      data_nascimento: data_nascimento,
-    };
-    console.log(formData)
-
-  };
-
-  return (
-    <div>
-      <FormControler onSubmit={handleSubmit}>
-        <InputArea>
-          <Label>Nome</Label>
-          <Input name="nome" value={nome} onChange={handleChange} />
-        </InputArea>
-        <InputArea>
-          <Label>E-mail</Label>
-          <Input name="email" type="email" value={email} onChange={handleChange} />
-        </InputArea>
-        <InputArea>
-          <Label>Telefone</Label>
-          <Input name="telefone" value={telefone} onChange={handleChange} />
-        </InputArea>
-        <InputArea>
-          <Label>Data de Nascimento</Label>
-          <Input
-            name="data_de_nascimento"
-            type="date"
-            value={data_nascimento}
-            onChange={handleChange}
-          />
-        </InputArea>
-        <Button type="submit">SALVAR</Button>
-      </FormControler>
-    </div>
-  );
-};
