@@ -57,46 +57,26 @@ export const  Form = ({ getUsers, onEdit, setOnEdit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = ref.current;
-
-    if (
-      !user.nome.value ||
-      !user.email.value ||
-      !user.fone.value ||
-      !user.data_nascimento.value
-    ) {
-      return toast.warn("Preencha todos os campos!");
+    const data = {
+      nome: user.nome.value,
+      email: user.email.value,
+      fone: user.fone.value,
+      datanascimento : user.data_nascimento.value,
     }
 
-    if (onEdit) {
-      await axios
-        .put("http://localhost:8000/" + onEdit.id, {
-          nome: user.nome.value,
-          email: user.email.value,
-          fone: user.fone.value,
-          data_nascimento: user.data_nascimento.value,
-        })
-        .then(({ data }) => toast.success(data))
-        .catch(({ data }) => toast.error(data));
-        console.log('executou2')
-    } else {
-      await axios
-        .post("http://localhost:8000", {
-          nome: user.nome.value,
-          email: user.email.value,
-          fone: user.fone.value,
-          data_nascimento: user.data_nascimento.value,
-        })
-        .then(({ data }) => toast.success(data))
-        .catch(({ data }) => toast.error(data));
-    }
+    console.log(data)
 
+    axios.post('http://localhost:8000/' , data)
+    .then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.log(error)
+    })
     user.nome.value = "";
     user.email.value = "";
     user.fone.value = "";
     user.data_nascimento.value = "";
-
-    setOnEdit(null);
-    getUsers();
   };
 
   return (

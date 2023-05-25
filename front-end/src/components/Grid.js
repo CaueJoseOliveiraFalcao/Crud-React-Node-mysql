@@ -36,7 +36,7 @@ export const Grid = ({ users , setUsers , setOnEdit }) =>{
                         <Td width="30%" alignCenter='true' >{item.email}</Td>
                         <Td width="20%" alignCenter='true' onlyWeb>{item.fone}</Td>
                         <Td alignCenter width="5%"><FaEdit/></Td>
-                        <Td alignCenter width="5%"><FaTrash onClick={() => handleDelete(item.id)}/></Td>
+                        <Td alignCenter width="5%" onClick={(item) => handleDelete(item.id)}><FaTrash /></Td>
                     </Tr>
                 );
                 })}
